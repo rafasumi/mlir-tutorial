@@ -1,6 +1,4 @@
-#include "mlir/Dialect/Arith/IR/Arith.h"
-#include "mlir/Dialect/Linalg/IR/Linalg.h"
-#include "mlir/Dialect/Tensor/IR/Tensor.h"
+#include "Transforms/StrengthReduction.h"
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllPasses.h"
 #include "mlir/Pass/PassManager.h"
@@ -10,6 +8,8 @@
 
 int main(int argc, char **argv) {
   mlir::registerAllPasses();
+
+  sblp::registerStrengthReductionPass();
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);

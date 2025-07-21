@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20.0)
-project(MLIRTutorial)
+project(SBLPMLIRTutorial)
 
 set(CMAKE_CXX_STANDARD 17)
 
 #===============================================================================
-# LLVM Configuration
+# LLVM config
 #===============================================================================
 find_package(LLVM REQUIRED CONFIG)
 find_package(MLIR REQUIRED CONFIG)
@@ -13,27 +13,21 @@ message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 message(STATUS "Using MLIRConfig.cmake in: ${MLIR_DIR}")
 
+list(APPEND CMAKE_MODULE_PATH "${MLIR_CMAKE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${MLIR_LLVM_DIR}")
+
+include(AddLLVM)
+include(AddMLIR)
+
 include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${MLIR_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
-get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
-
 #===============================================================================
-# Target Configuration
+# Project config
 #===============================================================================
-add_executable(matmul-opt
-  matmul-opt.cpp
-)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-target_link_libraries(matmul-opt
-  PRIVATE
-
-  MLIROptLib
-  ${dialect_libs}
-  ${conversion_libs}
-)
-
-mlir_check_link_libraries(matmul-opt)
+add_subdirectory(lib)
+add_subdirectory(tools)
