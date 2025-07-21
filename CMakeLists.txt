@@ -18,6 +18,9 @@ include_directories(${MLIR_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
+get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
+get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
+
 #===============================================================================
 # Target Configuration
 #===============================================================================
@@ -27,6 +30,10 @@ add_executable(matmul-opt
 
 target_link_libraries(matmul-opt
   PRIVATE
+
   MLIROptLib
-  MLIRArithDialect
+  ${dialect_libs}
+  ${conversion_libs}
 )
+
+mlir_check_link_libraries(matmul-opt)
