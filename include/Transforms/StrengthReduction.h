@@ -15,7 +15,7 @@ private:
   llvm::StringRef getArgument() const final { return "strength-reduction"; }
 
   llvm::StringRef getDescription() const final {
-    return "Replace math.ipowi operation when it uses powers of 2.";
+    return "Replace arith.muli operation with shift left when applicable.";
   }
 };
 

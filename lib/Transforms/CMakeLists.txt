@@ -4,7 +4,7 @@ add_mlir_library(SBLPTransforms
     LINK_LIBS PUBLIC
       MLIRIR
       MLIRPass
-      MLIRMathDialect
+      MLIRArithDialect
       MLIRFuncDialect
 )
 
