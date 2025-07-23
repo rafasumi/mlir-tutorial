@@ -1,6 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-LLVM_BUILD_DIR="$HOME/llvm-20.1.4/build"
+set -e
+source "$(dirname "${BASH_SOURCE[0]}")/env_check.sh"
 
 mkdir -p build
 BUILD_DIR=$(realpath -L ./build)

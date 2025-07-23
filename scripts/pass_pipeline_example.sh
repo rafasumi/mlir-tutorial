@@ -1,5 +1,10 @@
+#!/bin/bash
+
+set -e
+source "$(dirname "${BASH_SOURCE[0]}")/env_check.sh"
+
 # TODO: Implement this as a standalone pass pipeline in C++
-./build/matmul-opt examples/matmul.mlir \
+./build/bin/sblp-opt examples/matmul.mlir \
 --one-shot-bufferize="bufferize-function-boundaries" \
 --convert-linalg-to-loops \
 --convert-scf-to-cf \
@@ -9,7 +14,7 @@
 --convert-index-to-llvm \
 --finalize-memref-to-llvm \
 --reconcile-unrealized-casts | \
-mlir-runner -e main -entry-point-result=void -shared-libs=/home/rafael/llvm-20.1.4/build/lib/libmlir_runner_utils.so
+mlir-runner -e main -entry-point-result=void -shared-libs=$LLVM_BUILD_DIR/lib/libmlir_runner_utils.so
 
 # Observations:
 #   - This pass pipeline does not include optimizations, we would have to add them.
