@@ -1,4 +1,6 @@
+#include "Transforms/Pipeline.h"
 #include "Transforms/StrengthReduction.h"
+
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllPasses.h"
 #include "mlir/Pass/PassManager.h"
@@ -10,6 +12,7 @@ int main(int argc, char **argv) {
   mlir::registerAllPasses();
 
   sblp::registerStrengthReductionPass();
+  sblp::registerMatmulOptimizationPipeline();
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);
