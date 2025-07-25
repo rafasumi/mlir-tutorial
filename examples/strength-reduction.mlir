@@ -1,11 +1,11 @@
 module {
-    func.func @power_of_two_lhs(%x: i32) -> i32 {
+    func.func @power_of_two_rhs(%x: i32) -> i32 {
         %512 = arith.constant 512 : i32
         %result = arith.muli %x, %512 : i32
         return %result : i32
     }
 
-    func.func @power_of_two_rhs(%x: i32) -> i32 {
+    func.func @power_of_two_lhs(%x: i32) -> i32 {
         %1024 = arith.constant 1024 : i32
         %result = arith.muli %1024, %x : i32
         return %result : i32
