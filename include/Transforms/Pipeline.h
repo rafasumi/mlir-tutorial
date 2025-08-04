@@ -3,7 +3,8 @@
 
 namespace sblp {
 
-void registerMatmulOptimizationPipeline();
+void registerLoopOptimizationPipeline();
+void registerMLIRToLLVMPipeline();
 
 } // namespace sblp
 
