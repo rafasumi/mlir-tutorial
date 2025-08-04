@@ -1,5 +1,6 @@
 #include "Transforms/Pipeline.h"
 #include "Transforms/StrengthReduction.h"
+#include "Transforms/GCDTiling.h"
 
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllPasses.h"
@@ -14,6 +15,7 @@ int main(int argc, char **argv) {
   sblp::registerStrengthReductionPass();
   sblp::registerLoopOptimizationPipeline();
   sblp::registerMLIRToLLVMPipeline();
+  sblp::registerGCDTilingPass();
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);
