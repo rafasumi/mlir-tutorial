@@ -12,7 +12,8 @@ int main(int argc, char **argv) {
   mlir::registerAllPasses();
 
   sblp::registerStrengthReductionPass();
-  sblp::registerMatmulOptimizationPipeline();
+  sblp::registerLoopOptimizationPipeline();
+  sblp::registerMLIRToLLVMPipeline();
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);

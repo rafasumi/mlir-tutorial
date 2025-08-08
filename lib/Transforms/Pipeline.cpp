@@ -19,20 +19,19 @@
 using namespace mlir;
 
 namespace {
-struct MatmulOptimizationOptions
-    : public PassPipelineOptions<MatmulOptimizationOptions> {
+struct LoopOptimizationOptions
+    : public PassPipelineOptions<LoopOptimizationOptions> {
   Option<bool> enableUnrolling{
       *this, "enable-loop-unrolling",
       llvm::cl::desc("Whether to use the loop unrolling optimization"),
       llvm::cl::init(false)};
 };
 
-void addMatmulOptimizationPipeline(OpPassManager &pm,
-                                   const MatmulOptimizationOptions &options) {
+void addLoopOptimizationPipeline(OpPassManager &pm, const LoopOptimizationOptions &options) {
   // Bufferization (tensor->memref)
-  bufferization::OneShotBufferizationOptions bufferizationOptions;
+  mlir::bufferization::OneShotBufferizePassOptions bufferizationOptions;
   bufferizationOptions.bufferizeFunctionBoundaries = true;
-  pm.addPass(bufferization::createOneShotBufferizePass(bufferizationOptions));
+  pm.addPass(mlir::bufferization::createOneShotBufferizePass(bufferizationOptions));
 
   // Lowering linalg dialect
   if (options.enableUnrolling) {
@@ -45,9 +44,11 @@ void addMatmulOptimizationPipeline(OpPassManager &pm,
     // Convert linalg straight to SCF
     pm.addPass(createConvertLinalgToLoopsPass());
   }
+}
 
+void addMLIRtoLLVMPipeline(OpPassManager &pm) { 
   // Lowering to LLVM
-  pm.addPass(createConvertSCFToCFPass());
+  pm.addPass(createSCFToControlFlowPass());
   pm.addPass(createConvertControlFlowToLLVMPass());
   pm.addPass(createArithToLLVMConversionPass());
   pm.addPass(createConvertFuncToLLVMPass());
@@ -55,14 +56,21 @@ void addMatmulOptimizationPipeline(OpPassManager &pm,
   pm.addPass(createFinalizeMemRefToLLVMConversionPass());
   pm.addPass(createReconcileUnrealizedCastsPass());
 }
+
 } // namespace
 
 namespace sblp {
 
-void registerMatmulOptimizationPipeline() {
-  PassPipelineRegistration<MatmulOptimizationOptions>(
-      "optimize-matmul", "Optimize simple matrix multiplication",
-      addMatmulOptimizationPipeline);
+void registerLoopOptimizationPipeline() {
+  PassPipelineRegistration<LoopOptimizationOptions>(
+      "optimize-loops", "Optimize loops with tiling, unrolling, and pipelining.",
+      addLoopOptimizationPipeline);
+}
+
+void registerMLIRToLLVMPipeline() {
+    PassPipelineRegistration<>(
+        "mlir-to-llvm", "Emit LLVM IR from MLIR.",
+        addMLIRtoLLVMPipeline);
 }
 
 } // namespace sblp
