@@ -1,4 +1,4 @@
-// RUN: ./build/bin/sblp-opt --gcd-tiling %s | FileCheck %s
+// RUN: sblp-opt --gcd-tiling %s | FileCheck %s
 
 #matmul_accesses = [
   affine_map<(m, n, k) -> (m, k)>,
@@ -13,7 +13,6 @@
 }
 
 module {
-
   // This function can be tiled because all tensors have static shapes.
   func.func @tileable_matmul(%A: tensor<1024x256xf32>, %B: tensor<256x1024xf32>, %C: tensor<1024x1024xf32>) {
     %result = linalg.generic #matmul_trait
