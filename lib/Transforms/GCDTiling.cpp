@@ -7,13 +7,15 @@
 
 using namespace mlir;
 
+namespace {
 int64_t greatestCommonDivisor(int64_t lhs, int64_t rhs) {
   return rhs == 0 ? lhs : greatestCommonDivisor(rhs, lhs % rhs);
 }
+} // namespace
 
 namespace sblp {
 
-int64_t GCDTilingPass::computeTilingSize(mlir::linalg::LinalgOp op) {
+int64_t GCDTilingPass::computeTilingSize(linalg::LinalgOp op) {
   std::vector<int64_t> collectedDims;
 
   // Collect the dimensions from all operands.
@@ -33,7 +35,6 @@ int64_t GCDTilingPass::computeTilingSize(mlir::linalg::LinalgOp op) {
 
   return tileSize;
 }
-
 
 void GCDTilingPass::runOnOperation() {
   auto F = getOperation();
@@ -56,12 +57,12 @@ void GCDTilingPass::runOnOperation() {
   IRRewriter rewriter(F.getContext());
 
   for (auto op : ops) {
-    mlir::linalg::LinalgTilingOptions options;
+    linalg::LinalgTilingOptions options;
 
     auto tileSize = computeTilingSize(op);
 
     options.setTileSizes({tileSize, tileSize});
-    options.setLoopType(mlir::linalg::LinalgTilingLoopType::Loops);
+    options.setLoopType(linalg::LinalgTilingLoopType::Loops);
 
     auto tiledOp = tileLinalgOp(rewriter, op, options);
 
@@ -76,8 +77,6 @@ void GCDTilingPass::runOnOperation() {
   }
 }
 
-void registerGCDTilingPass() {
-  PassRegistration<GCDTilingPass>();
-}
+void registerGCDTilingPass() { PassRegistration<GCDTilingPass>(); }
 
-} // namespace
+} // namespace sblp

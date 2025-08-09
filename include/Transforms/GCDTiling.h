@@ -17,7 +17,8 @@ private:
   llvm::StringRef getArgument() const final { return "gcd-tiling"; }
 
   llvm::StringRef getDescription() const final {
-    return "Tile loops by a factor of the greatest common divisor between tensor dimensions.";
+    return "Tile loops by a factor of the greatest common divisor between "
+           "tensor dimensions.";
   }
 };
 
