@@ -1,6 +1,7 @@
 add_mlir_library(SBLPTransforms
     Pipeline.cpp
     StrengthReduction.cpp
+    GCDTiling.cpp
 
     LINK_LIBS PUBLIC
       MLIRIR
