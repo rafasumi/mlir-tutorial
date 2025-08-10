@@ -11,6 +11,7 @@
 #include "mlir/Dialect/Affine/Passes.h"
 #include "mlir/Dialect/Bufferization/Transforms/OneShotAnalysis.h"
 #include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+#include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/Dialect/Linalg/Passes.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Pass/PassOptions.h"
@@ -27,18 +28,20 @@ struct LoopOptimizationOptions
       llvm::cl::init(false)};
 };
 
-void addLoopOptimizationPipeline(OpPassManager &pm, const LoopOptimizationOptions &options) {
+void addLoopOptimizationPipeline(OpPassManager &pm,
+                                 const LoopOptimizationOptions &options) {
   // Bufferization (tensor->memref)
   mlir::bufferization::OneShotBufferizePassOptions bufferizationOptions;
   bufferizationOptions.bufferizeFunctionBoundaries = true;
-  pm.addPass(mlir::bufferization::createOneShotBufferizePass(bufferizationOptions));
+  pm.addPass(
+      mlir::bufferization::createOneShotBufferizePass(bufferizationOptions));
 
   // Lowering linalg dialect
   if (options.enableUnrolling) {
     // Use affine optimizations
     pm.addPass(createConvertLinalgToAffineLoopsPass());
     // Unrolling is one of many affine optimizations that could be applied
-    pm.addPass(affine::createLoopUnrollAndJamPass());
+    pm.addNestedPass<func::FuncOp>(affine::createLoopUnrollAndJamPass());
     pm.addPass(createLowerAffinePass());
   } else {
     // Convert linalg straight to SCF
@@ -46,7 +49,7 @@ void addLoopOptimizationPipeline(OpPassManager &pm, const LoopOptimizationOption
   }
 }
 
-void addMLIRtoLLVMPipeline(OpPassManager &pm) { 
+void addMLIRtoLLVMPipeline(OpPassManager &pm) {
   // Lowering to LLVM
   pm.addPass(createSCFToControlFlowPass());
   pm.addPass(createConvertControlFlowToLLVMPass());
@@ -63,14 +66,14 @@ namespace sblp {
 
 void registerLoopOptimizationPipeline() {
   PassPipelineRegistration<LoopOptimizationOptions>(
-      "optimize-loops", "Optimize loops with tiling, unrolling, and pipelining.",
+      "optimize-loops",
+      "Optimize loops with tiling, unrolling, and pipelining.",
       addLoopOptimizationPipeline);
 }
 
 void registerMLIRToLLVMPipeline() {
-    PassPipelineRegistration<>(
-        "mlir-to-llvm", "Emit LLVM IR from MLIR.",
-        addMLIRtoLLVMPipeline);
+  PassPipelineRegistration<>("mlir-to-llvm", "Emit LLVM IR from MLIR.",
+                             addMLIRtoLLVMPipeline);
 }
 
 } // namespace sblp
