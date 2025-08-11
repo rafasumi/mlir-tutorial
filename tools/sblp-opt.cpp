@@ -1,6 +1,6 @@
+#include "Transforms/GCDTiling.h"
 #include "Transforms/Pipeline.h"
 #include "Transforms/StrengthReduction.h"
-#include "Transforms/GCDTiling.h"
 
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllPasses.h"
