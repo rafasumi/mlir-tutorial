@@ -1,4 +1,5 @@
 #include "Transforms/Pipeline.h"
+#include "Transforms/GCDTiling.h"
 
 #include "mlir/Conversion/AffineToStandard/AffineToStandard.h"
 #include "mlir/Conversion/ArithToLLVM/ArithToLLVM.h"
@@ -35,6 +36,7 @@ void addLoopOptimizationPipeline(OpPassManager &pm,
   bufferizationOptions.bufferizeFunctionBoundaries = true;
   pm.addPass(
       mlir::bufferization::createOneShotBufferizePass(bufferizationOptions));
+  pm.addPass(sblp::createGCDTilingPass());
 
   // Lowering linalg dialect
   if (options.enableUnrolling) {
