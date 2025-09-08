@@ -79,4 +79,8 @@ void GCDTilingPass::runOnOperation() {
 
 void registerGCDTilingPass() { PassRegistration<GCDTilingPass>(); }
 
+std::unique_ptr<OperationPass<func::FuncOp>> createGCDTilingPass() {
+  return std::make_unique<GCDTilingPass>();
+}
+
 } // namespace sblp

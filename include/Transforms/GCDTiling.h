@@ -23,6 +23,7 @@ private:
 };
 
 void registerGCDTilingPass();
+std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createGCDTilingPass();
 
 } // namespace sblp
 
