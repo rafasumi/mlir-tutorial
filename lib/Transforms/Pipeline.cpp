@@ -14,6 +14,7 @@
 #include "mlir/Dialect/Bufferization/Transforms/Passes.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/Dialect/Linalg/Passes.h"
+#include "mlir/Dialect/MemRef/Transforms/Passes.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Pass/PassOptions.h"
 #include "mlir/Pass/PassRegistry.h"
@@ -51,10 +52,16 @@ void addLoopOptimizationPipeline(OpPassManager &pm,
   }
 }
 
-void addMLIRtoLLVMPipeline(OpPassManager &pm) {
-  // Lowering to LLVM
+void addLowertoLLVMPipeline(OpPassManager &pm) {
+  // Lower structured control flow
   pm.addPass(createSCFToControlFlowPass());
   pm.addPass(createConvertControlFlowToLLVMPass());
+
+  // Lower memref ops that use strided metadata
+  pm.addPass(memref::createExpandStridedMetadataPass());
+  pm.addPass(createLowerAffinePass());
+
+  // Finalize llvm conversion
   pm.addPass(createArithToLLVMConversionPass());
   pm.addPass(createConvertFuncToLLVMPass());
   pm.addPass(createConvertIndexToLLVMPass());
@@ -73,9 +80,10 @@ void registerLoopOptimizationPipeline() {
       addLoopOptimizationPipeline);
 }
 
-void registerMLIRToLLVMPipeline() {
-  PassPipelineRegistration<>("mlir-to-llvm", "Emit LLVM IR from MLIR.",
-                             addMLIRtoLLVMPipeline);
+void registerLowerToLLVMPipeline() {
+  PassPipelineRegistration<>("lower-to-llvm-dialect",
+                             "Lower IR to the `llvm` dialect.",
+                             addLowertoLLVMPipeline);
 }
 
 } // namespace sblp
