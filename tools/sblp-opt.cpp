@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 
   sblp::registerStrengthReductionPass();
   sblp::registerLoopOptimizationPipeline();
-  sblp::registerMLIRToLLVMPipeline();
+  sblp::registerLowerToLLVMPipeline();
   sblp::registerGCDTilingPass();
 
   mlir::DialectRegistry registry;

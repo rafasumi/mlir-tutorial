@@ -4,7 +4,7 @@
 namespace sblp {
 
 void registerLoopOptimizationPipeline();
-void registerMLIRToLLVMPipeline();
+void registerLowerToLLVMPipeline();
 
 } // namespace sblp
 
