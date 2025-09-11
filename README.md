@@ -23,7 +23,7 @@ The `optimize-loops` pipeline applies a few optimizations and transformations th
 This tool is an extension of the [`mlir-opt`](https://mlir.llvm.org/docs/Tutorials/MlirOpt/) binary which adds all passes and pipelines implemented for the tutorial. `*-opt` tools are usually used in MLIR-based projects as the entry point for running transformations, optimizations, and lowerings.
 
 ### [Test Infrastructure](https://github.com/rafasumi/mlir-tutorial/tree/main/test)
-We have included an example of a test infrastructure which follows the [guidelines](https://llvm.org/docs/TestingGuide.html) for LLVM-based projects. These tests use `llvm-lit` and `FileCheck` to verify that `sblp-opt` outputs the IR as expected when applying different transformations. This is not crucial for learning MLIR and thus is only a complement to the tutorial. However, testing is essential to the work of a compiler enginner so it's good to have a context of how to test MLIR-based projects.
+We have included an example of a test infrastructure which follows the [guidelines](https://llvm.org/docs/TestingGuide.html) for LLVM-based projects. These tests use `llvm-lit` and `FileCheck` to verify that `sblp-opt` outputs the IR as expected when applying different transformations. This is not crucial for learning MLIR and thus is only a complement to the tutorial. However, testing is essential to the work of a compiler enginner so it's good to have a context of how to test MLIR-based projects. 
 
 ## Dependencies
 We haven't tested running this code on Windows, therefore we recommend using Linux or macOS. These are the software requirements for running the code in this tutorial:
@@ -57,7 +57,11 @@ export LLVM_BUILD_DIR=path/to/llvm-project/build
 ./scripts/build.sh
 ```
 
-This will output the `sblp-opt` binary in the `./build/bin` directory.
+This will output the `sblp-opt` binary in the `./build/bin` directory. Once you have built the project, you can run tests with the following command:
+
+```bash
+ninja -C build check-sblp
+```
 
 ## Paper
 TODO
