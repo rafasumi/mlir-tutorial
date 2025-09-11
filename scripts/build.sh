@@ -16,4 +16,4 @@ cmake -S . -B $BUILD_DIR -G "Ninja"               \
     -DCMAKE_CXX_COMPILER=$CXX                     \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
 
-ninja -j$(nproc) -C $BUILD_DIR
+ninja -C $BUILD_DIR
