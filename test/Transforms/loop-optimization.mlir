@@ -1,5 +1,4 @@
 // RUN: sblp-opt --optimize-loops %s | FileCheck %s
-// RUN: sblp-opt --optimize-loops="enable-loop-unrolling" %s | FileCheck %s --check-prefixes=CHECK,UNROLL
 
 #matmul_accesses = [
   affine_map<(m, n, k) -> (m, k)>,
@@ -31,16 +30,12 @@ module {
   // CHECK-SAME:       %[[arg2:[^:]+]]: memref<1024x1024xf32, strided<[?, ?], offset: ?>>) {
   // CHECK:        scf.for
   // CHECK:          scf.for
-  // CHECK:            scf.for
-  // CHECK:              arith.mulf
-  // CHECK:              arith.addf
-  // UNROLL:             arith.mulf
-  // UNROLL:             arith.addf
-  // UNROLL:             arith.mulf
-  // UNROLL:             arith.addf
-  // UNROLL:             arith.mulf
-  // UNROLL:             arith.addf
-  // CHECK-NOT:          arith.mulf
-  // CHECK-NOT:          arith.addf
+  // CHECK:           memref.subview
+  // CHECK:           scf.for
+  // CHECK:             scf.for
+  // CHECK:               scf.for
+  // CHECK:                 memref.load
+  // CHECK:                 arith.mulf
+  // CHECK:                 arith.addf
   // CHECK:        return
 }

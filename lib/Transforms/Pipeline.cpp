@@ -22,34 +22,16 @@
 using namespace mlir;
 
 namespace {
-struct LoopOptimizationOptions
-    : public PassPipelineOptions<LoopOptimizationOptions> {
-  Option<bool> enableUnrolling{
-      *this, "enable-loop-unrolling",
-      llvm::cl::desc("Whether to use the loop unrolling optimization"),
-      llvm::cl::init(false)};
-};
-
-void addLoopOptimizationPipeline(OpPassManager &pm,
-                                 const LoopOptimizationOptions &options) {
+void addLoopOptimizationPipeline(OpPassManager &pm) {
   // Bufferization (tensor->memref)
   mlir::bufferization::OneShotBufferizePassOptions bufferizationOptions;
   bufferizationOptions.bufferizeFunctionBoundaries = true;
   pm.addPass(
       mlir::bufferization::createOneShotBufferizePass(bufferizationOptions));
-  pm.addPass(sblp::createGCDTilingPass());
 
-  // Lowering linalg dialect
-  if (options.enableUnrolling) {
-    // Use affine optimizations
-    pm.addPass(createConvertLinalgToAffineLoopsPass());
-    // Unrolling is one of many affine optimizations that could be applied
-    pm.addNestedPass<func::FuncOp>(affine::createLoopUnrollAndJamPass());
-    pm.addPass(createLowerAffinePass());
-  } else {
-    // Convert linalg straight to SCF
-    pm.addPass(createConvertLinalgToLoopsPass());
-  }
+  // Apply tiling and lower linalg to scf loops
+  pm.addPass(sblp::createGCDTilingPass());
+  pm.addPass(createConvertLinalgToLoopsPass());
 }
 
 void addLowertoLLVMPipeline(OpPassManager &pm) {
@@ -74,10 +56,8 @@ void addLowertoLLVMPipeline(OpPassManager &pm) {
 namespace sblp {
 
 void registerLoopOptimizationPipeline() {
-  PassPipelineRegistration<LoopOptimizationOptions>(
-      "optimize-loops",
-      "Optimize loops with tiling, unrolling, and pipelining.",
-      addLoopOptimizationPipeline);
+  PassPipelineRegistration<>("optimize-loops", "Bufferize and tile loops.",
+                             addLoopOptimizationPipeline);
 }
 
 void registerLowerToLLVMPipeline() {
