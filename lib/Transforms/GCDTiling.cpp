@@ -47,6 +47,8 @@ void GCDTilingPass::runOnOperation() {
     for (auto operand : op->getOperands()) {
       if (auto operandType = llvm::dyn_cast<ShapedType>(operand.getType())) {
         tilable &= ShapedType::isStaticShape(operandType.getShape());
+      } else {
+        tilable = false;
       }
     }
 
