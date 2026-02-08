@@ -4,7 +4,7 @@ set -e
 source "$(dirname "${BASH_SOURCE[0]}")/env_check.sh"
 
 mkdir -p build
-BUILD_DIR=$(realpath -L ./build)
+BUILD_DIR="$(cd ./build && pwd -P)"
 
 CC=$LLVM_BUILD_DIR/bin/clang
 CXX=$LLVM_BUILD_DIR/bin/clang++
