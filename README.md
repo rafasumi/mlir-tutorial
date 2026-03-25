@@ -30,7 +30,7 @@ We haven't tested running this code on Windows, therefore we recommend using Lin
 
 | Dependency | Version   | Installation Link                                                   |
 |------------|-----------|---------------------------------------------------------------------|
-| LLVM       | >= 21     | [llvm.org](https://llvm.org/docs/CMake.html)                        |
+| LLVM       | == 21     | [llvm.org](https://llvm.org/docs/CMake.html)                        |
 | Python     | >= 3.10   | [python.org](https://www.python.org/downloads/release/python-3100/) |
 | CMake      | >= 3.20   | [cmake.org](https://cmake.org/install/)                             |
 | Ninja      | >= 1.10   | [ninja-build GitHub](https://github.com/ninja-build/ninja/releases) |
